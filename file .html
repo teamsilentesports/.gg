@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Team Silent | Professional Gaming Organization</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0A192F;
+            color: #FFFFFF;
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+        html { scroll-behavior: smooth; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0A192F; }
+        ::-webkit-scrollbar-thumb { background: #1E3A5F; border-radius: 10px; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 32px; }
+
+        /* ========== HEADER ========== */
+        .navy-header {
+            background: #0A192F;
+            border-bottom: 2px solid #1E3A5F;
+            padding: 12px 32px;
+            position: sticky; top: 0; z-index: 1000;
+        }
+        .header-flex {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 30px; max-width: 1400px; margin: 0 auto;
+        }
+        .menu-icon {
+            cursor: pointer; font-size: 1.8rem; color: #FFFFFF;
+            display: flex; align-items: center; justify-content: center;
+            width: 45px; height: 45px; border-radius: 50%;
+            background: #1E3A5F; border: 1px solid #2A5F8A;
+            position: relative; z-index: 201; transition: 0.3s;
+        }
+        .menu-icon:hover { background: #2A5F8A; transform: scale(1.08); }
+        .menu-icon i { font-size: 24px; color: #FFFFFF; transition: 0.3s; }
+        .menu-icon:hover i { color: #FFB347; }
+        .menu-icon.active { background: #2A5F8A; }
+        .menu-icon.active i { color: #FFB347; }
+
+        .main-dropdown {
+            position: fixed; top: 75px; left: 32px; width: 280px;
+            background: #0A192F; border: 1px solid #1E3A5F; border-radius: 12px;
+            z-index: 200; opacity: 0; visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            max-height: 70vh; overflow-y: auto; pointer-events: none;
+        }
+        .main-dropdown.show { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: all; }
+        .main-dropdown ul { list-style: none; padding: 8px 0; }
+        .main-menu-item {
+            padding: 14px 20px; cursor: pointer; font-size: 0.9rem;
+            font-weight: 500; color: #FFFFFF;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid rgba(30,58,95,0.3);
+            user-select: none; transition: all 0.2s ease;
+        }
+        .main-menu-item:last-child { border-bottom: none; }
+        .main-menu-item:hover { background: #1E3A5F; color: #FFB347; padding-left: 24px; }
+
+        .submenu {
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1);
+            background: rgba(15,42,74,0.5);
+        }
+        .submenu.open { max-height: 600px; }
+        .submenu ul { list-style: none; padding: 0; }
+        .submenu ul li {
+            padding: 12px 20px 12px 40px; cursor: pointer;
+            font-size: 0.85rem; color: #8AA9D6;
+            border-bottom: 1px solid rgba(30,58,95,0.2);
+            transition: all 0.2s ease;
+        }
+        .submenu ul li:last-child { border-bottom: none; }
+        .submenu ul li:hover { background: rgba(30,58,95,0.5); color: #FFB347; padding-left: 44px; }
+        .game-info { display: flex; flex-direction: column; }
+        .game-name { font-weight: 600; font-size: 0.85rem; color: #FFFFFF; }
+        .submenu ul li:hover .game-name { color: #FFB347; }
+        .game-desc { font-size: 0.7rem; color: #8AA9D6; }
+
+        .menu-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 150; display: none; background: rgba(0,0,0,0.3);
+        }
+        .menu-overlay.show { display: block; }
+
+        .site-logo {
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; margin: 0 auto; transition: 0.3s;
+        }
+        .site-logo:hover { transform: scale(1.05); filter: drop-shadow(0 0 15px rgba(255,179,71,0.4)); }
+        .site-logo img { 
+            width: 55px; 
+            height: auto; 
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        .account-area { display: flex; align-items: center; gap: 15px; }
+        .account-icon {
+            background: #1E3A5F; border: none; font-size: 1.4rem;
+            color: #FFFFFF; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            width: 42px; height: 42px; border-radius: 50%; transition: 0.3s;
+        }
+        .account-icon:hover { transform: translateY(-2px); background: #2A5F8A; color: #FFB347; }
+
+        /* ========== PAGE SWITCHING ========== */
+        .page-section { display: none; }
+        .page-section.active-section { display: block; }
+
+        /* ========== HOMEPAGE ========== */
+        .poster-area {
+            margin: 32px 0 40px; overflow: hidden;
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+            border: 1px solid #1E3A5F;
+        }
+        .poster-img { width: 100%; display: block; object-fit: cover; max-height: 500px; }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            padding: 0 32px;
+        }
+        .section-header h2 { font-size: 1.5rem; font-weight: 700; color: #FFFFFF; }
+
+        .teams-view-all-link {
+            color: #FFFFFF; text-decoration: none; font-weight: 500;
+            font-size: 0.8rem; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; gap: 8px;
+            background: none; border: none; font-family: 'Inter', sans-serif;
+        }
+        .teams-view-all-link:hover { color: #FFB347; gap: 12px; }
+
+        .btn-text-link {
+            color: #FFFFFF; text-decoration: none; font-weight: 500;
+            font-size: 0.8rem; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .btn-text-link:hover { color: #FFB347; gap: 12px; }
+
+        /* ========== OUR TEAMS - Full Background Cover ========== */
+        .teams-slider-section {
+            background: #0A192F; padding: 40px 0; margin-bottom: 40px;
+            border: 1px solid #1E3A5F; border-left: none; border-right: none;
+        }
+        .team-static-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            padding: 0 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .team-static-card {
+            background: #0A192F; 
+            cursor: pointer; transition: 0.3s; border: 1px solid #1E3A5F;
+            border-radius: 8px;
+            min-height: 220px;
+            position: relative;
+            overflow: hidden;
+            /* Default background image will be set via inline style */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .team-static-card:hover { transform: translateY(-8px); border-color: #FFB347; }
+
+        /* Overlay for text on hover */
+        .team-card-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 25, 47, 0.85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            backdrop-filter: blur(2px);
+        }
+        .team-static-card:hover .team-card-overlay {
+            opacity: 1;
+        }
+        .team-card-overlay h3 { 
+            font-size: 1.4rem; 
+            color: #FFB347; 
+            margin-bottom: 8px; 
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .team-card-overlay p { 
+            font-size: 0.85rem; 
+            color: #FFFFFF; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        /* ========== UPCOMING MATCHES ========== */
+        .matches-section { padding: 0 0 40px; }
+        .matches-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 0 32px; }
+        .match-card { background: #0A192F; padding: 24px; transition: 0.3s; border: 1px solid #1E3A5F; border-radius: 8px; cursor: pointer; }
+        .match-card:hover { transform: translateY(-5px); border-color: #FFB347; background: #0F2A4A; }
+        .match-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .match-date-badge { font-size: 0.7rem; color: #8AA9D6; background: rgba(30,58,95,0.5); padding: 3px 10px; border-radius: 20px; }
+        .match-date-badge.live { background: #E04658; color: #FFFFFF; font-weight: 700; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        .match-title { font-size: 1rem; font-weight: 700; margin-bottom: 12px; color: #FFFFFF; }
+        .match-teams { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .match-team { color: #8AA9D6; font-size: 0.8rem; }
+        .match-vs { font-weight: 800; color: #FFB347; font-size: 0.75rem; }
+        .match-info-row { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(30,58,95,0.5); }
+        .match-league { font-size: 0.7rem; color: #8AA9D6; }
+        .match-action { color: #FFB347; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+
+        /* ========== SPONSORS ========== */
+        .sponsors-section { padding: 40px 0; margin-bottom: 40px; border: 1px solid #1E3A5F; border-left: none; border-right: none; overflow: hidden; }
+        .sponsors-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; padding: 0 32px; }
+        .sponsor-card { background: #0F2A4A; border: 1px solid #1E3A5F; border-radius: 12px; padding: 24px 16px; text-align: center; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: 120px; }
+        .sponsor-card:hover { transform: translateY(-5px); border-color: #FFB347; background: #1A3A5C; }
+        .sponsor-card i { font-size: 32px; color: #FFFFFF; transition: 0.3s; }
+        .sponsor-card:hover i { color: #FFB347; }
+        .sponsor-card h4 { font-size: 1rem; font-weight: 700; color: #FFFFFF; }
+        .sponsor-card .sponsor-tier { font-size: 0.65rem; font-weight: 600; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
+        .tier-premium { background: #FFB347; color: #0A192F; }
+        .tier-gold { background: linear-gradient(135deg, #FFD700, #FFA500); color: #0A192F; }
+        .tier-partner { background: rgba(255,255,255,0.15); color: #FFFFFF; }
+
+        /* ========== ALL TEAMS (ROSTER) ========== */
+        .teams-hero { padding: 50px 0 30px; text-align: center; }
+        .teams-hero h1 { font-size: 2.5rem; font-weight: 800; color: #FFFFFF; }
+        .teams-grid-page { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 30px 32px 60px; max-width: 1400px; margin: 0 auto; }
+        .game-card { background: #0F2A4A; border-radius: 14px; transition: 0.4s; border: 1px solid #1E3A5F; cursor: pointer; position: relative; overflow: hidden; min-height: 200px; }
+        .game-card:hover { transform: translateY(-5px); border-color: #FFB347; }
+        .game-card-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; transition: all 0.5s ease; transform: scale(1.05); z-index: 0; }
+        .game-card:hover .game-card-bg { opacity: 1; transform: scale(1); }
+        .game-card-content { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; padding: 24px; height: 100%; transition: all 0.5s ease; background: #0F2A4A; flex-direction: column; gap: 12px; }
+        .game-card:hover .game-card-content { background: rgba(15, 42, 74, 0.15); width: 20%; position: absolute; right: 0; padding: 16px 10px; gap: 8px; }
+        .game-logo-img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            transition: all 0.5s ease;
+        }
+        .game-card:hover .game-logo-img {
+            width: 45px;
+            height: 45px;
+        }
+        .game-card-icon h3 { 
+            font-size: 1.2rem; font-weight: 700; color: #FFFFFF; text-align: center;
+            transition: all 0.5s ease;
+        }
+        .game-card:hover .game-card-icon h3 { font-size: 0.8rem; }
+        .back-home-btn { background: #FFB347; color: #0A192F; padding: 6px 16px; border-radius: 30px; font-weight: 600; font-size: 0.8rem; border: none; cursor: pointer; font-family: 'Inter', sans-serif; transition: 0.3s; margin: 16px 0 8px; }
+
+        /* ========== TEAM DETAIL ========== */
+        .cover-photo { width: 100%; height: 350px; background-size: cover; background-position: center; }
+        .tab-nav { display: flex; gap: 28px; border-bottom: 2px solid #1E3A5F; margin: 16px 32px 32px; }
+        .tab-btn { background: none; border: none; color: #8AA9D6; font-size: 1.1rem; font-weight: 600; padding: 14px 0; cursor: pointer; position: relative; font-family: 'Inter', sans-serif; }
+        .tab-btn::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 2px; background: #FFB347; transition: 0.3s; }
+        .tab-btn.active { color: #FFFFFF; }
+        .tab-btn.active::after { width: 100%; }
+        .slider-section { max-width: 1400px; margin: 0 auto 50px; padding: 0 32px; position: relative; }
+        .slider-wrapper { overflow: hidden; padding: 16px 0; }
+        .slider-track { display: flex; transition: transform 0.5s ease; gap: 20px; }
+        .member-card { flex: 0 0 calc(33.333% - 14px); min-width: calc(33.333% - 14px); background: #0F2A4A; border: 1px solid #1E3A5F; border-radius: 12px; overflow: hidden; transition: 0.3s; }
+        .member-card:hover { transform: translateY(-5px); border-color: #FFB347; }
+        .member-image { width: 100%; height: 240px; background: linear-gradient(135deg, #1a1a2e, #16213e); display: flex; align-items: center; justify-content: center; position: relative; }
+        .member-image i { font-size: 60px; color: rgba(255,255,255,0.1); }
+        .member-role-badge { position: absolute; top: 10px; right: 10px; background: #FFB347; color: #0A192F; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; }
+        .member-info { padding: 16px; }
+        .member-info h3 { font-size: 1.1rem; }
+        .member-slider-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; background: #1E3A5F; border: 1px solid #2A5F8A; border-radius: 50%; color: #FFFFFF; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; }
+        .member-slider-btn:hover { background: #2A5F8A; border-color: #FFB347; color: #FFB347; }
+        .member-slider-btn.prev { left: 8px; } .member-slider-btn.next { right: 8px; }
+        .member-slider-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .slider-dots { display: flex; justify-content: center; gap: 6px; margin-top: 16px; }
+        .slider-dot { width: 8px; height: 8px; border-radius: 50%; background: #1E3A5F; cursor: pointer; }
+        .slider-dot.active { background: #FFB347; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .back-navigation { max-width: 1400px; margin: 16px auto; padding: 0 32px; }
+        .back-btn { background: none; border: none; color: #8AA9D6; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
+        .back-btn:hover { color: #FFB347; }
+
+        /* ========== FOOTER ========== */
+        .footer-logo-img { width: 55px; height: auto; margin-bottom: 12px; object-fit: contain; border-radius: 10px; }
+        .footer { background: #0A192F; padding: 50px 32px 30px; border-top: 1px solid #1E3A5F; }
+        .footer-content { max-width: 1400px; margin: 0 auto; text-align: center; }
+        .footer-logo h2 { font-size: 1.6rem; font-weight: 800; color: #FFFFFF; }
+        .footer-description { max-width: 500px; margin: 0 auto 30px; color: #8AA9D6; font-size: 0.85rem; }
+        .footer-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 24px; margin-bottom: 30px; }
+        .footer-links a { color: #FFFFFF; text-decoration: none; font-size: 0.8rem; }
+        .footer-links a:hover { color: #FFB347; }
+        .footer-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding-top: 24px; border-top: 1px solid #1E3A5F; font-size: 0.7rem; color: #8AA9D6; }
+        .back-to-top { position: fixed; bottom: 24px; right: 24px; width: 42px; height: 42px; background: #1E3A5F; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; visibility: hidden; z-index: 999; transition: all 0.3s; font-size: 0.9rem; }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        .back-to-top:hover { transform: translateY(-5px); background: #2A5F8A; }
+
+        @media (max-width: 900px) { .team-static-grid { grid-template-columns: repeat(2, 1fr); padding: 0 32px; } }
+        @media (max-width: 768px) { .cover-photo { height: 250px; } .member-card { flex: 0 0 100%; min-width: 100%; } .site-logo img { width: 42px; } }
+        @media (max-width: 480px) { .team-static-grid { grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 16px; } }
+    </style>
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<header class="navy-header">
+    <div class="header-flex">
+        <div class="menu-icon" id="menuIcon"><i class="fas fa-bars"></i></div>
+        <div class="site-logo" id="homeLogo">
+            <img src="https://raw.githubusercontent.com/teamsilentesports/.gg/main/20260430_225451.png" alt="Team Silent Logo">
+        </div>
+        <div class="account-area"><button class="account-icon"><i class="fas fa-user-circle"></i></button></div>
+    </div>
+</header>
+
+<!-- 3-DOT MENU -->
+<div class="main-dropdown" id="mainDropdown">
+    <ul>
+        <li class="main-menu-item" id="teamsMenuBtn"><span>Teams</span><span><i class="fas fa-chevron-down"></i></span></li>
+        <div class="submenu" id="teamsSubmenu">
+            <ul>
+                <li class="submenu-item" data-action="valorant"><div class="game-info"><span class="game-name">Valorant</span><span class="game-desc">Turn the Tide</span></div></li>
+                <li class="submenu-item" data-action="freefire"><div class="game-info"><span class="game-name">Free Fire</span><span class="game-desc">Battle In Style</span></div></li>
+                <li class="submenu-item" data-action="pubgm"><div class="game-info"><span class="game-name">PUBG Mobile</span><span class="game-desc">Chicken Dinner</span></div></li>
+                <li class="submenu-item" data-action="cod"><div class="game-info"><span class="game-name">Call of Duty</span><span class="game-desc">The Ultimate Battle</span></div></li>
+                <li class="submenu-item" data-action="cs2"><div class="game-info"><span class="game-name">Counter-Strike 2</span><span class="game-desc">Aiming for the stars</span></div></li>
+                <li class="submenu-item" data-action="mlbb"><div class="game-info"><span class="game-name">MLBB</span><span class="game-desc">Mobile Legends</span></div></li>
+                <li class="submenu-item" data-action="efootball"><div class="game-info"><span class="game-name">eFootball</span><span class="game-desc">The Beautiful Game</span></div></li>
+                <li class="submenu-item" data-action="dota2"><div class="game-info"><span class="game-name">Dota 2</span><span class="game-desc">International Champions</span></div></li>
+                <li class="submenu-item" data-action="allteams" style="color:#FFB347;font-weight:600;justify-content:center;">View All Teams →</li>
+            </ul>
+        </div>
+        <li class="main-menu-item" id="orgMenuBtn"><span>Organization</span><span><i class="fas fa-chevron-down"></i></span></li>
+        <div class="submenu" id="orgSubmenu"><ul><li class="submenu-item" data-action="about">About Us</li><li class="submenu-item" data-action="partners">Partners</li><li class="submenu-item" data-action="newsroom">Newsroom</li><li class="submenu-item" data-action="articles">Articles</li><li class="submenu-item" data-action="careers">Careers</li></ul></div>
+        <li class="main-menu-item" data-action="schedule"><span>Schedule</span></li>
+        <li class="main-menu-item" id="storeMenuBtn"><span>Store</span><span><i class="fas fa-chevron-down"></i></span></li>
+        <div class="submenu" id="storeSubmenu"><ul><li class="submenu-item" data-action="jerseys">Jerseys</li><li class="submenu-item" data-action="apparel">Apparel</li><li class="submenu-item" data-action="accessories">Accessories</li><li class="submenu-item" data-action="giftcards">Gift Cards</li></ul></div>
+    </ul>
+</div>
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<!-- ==================== PAGE 1: HOMEPAGE ==================== -->
+<div id="homepageSection" class="page-section active-section">
+    <main>
+        <div class="poster-area" data-aos="fade-up">
+            <img class="poster-img" src="https://raw.githubusercontent.com/teamsilentesports/.gg/main/Screenshot%20(15).jpg" alt="Team Silent Banner">
+        </div>
+
+        <!-- OUR TEAMS - Full Background Cover -->
+        <div class="teams-slider-section" data-aos="fade-up">
+            <div class="section-header">
+                <h2>Our Teams</h2>
+                <button class="teams-view-all-link" id="viewAllTeamsBtn">View All Teams <i class="fas fa-arrow-right"></i></button>
+            </div>
+            <div class="team-static-grid" id="teamStaticGrid"></div>
+        </div>
+
+        <!-- UPCOMING MATCHES -->
+        <div class="matches-section">
+            <div class="section-header"><h2>Upcoming Matches</h2><span class="btn-text-link" onclick="alert('Full schedule coming soon')">View Schedule <i class="fas fa-arrow-right"></i></span></div>
+            <div class="matches-grid" data-aos="fade-up">
+                <div class="match-card"><div class="match-card-header"><span class="match-date-badge live">● LIVE NOW</span></div><div class="match-title">Valorant Championship - Grand Final</div><div class="match-teams"><span class="match-team">Team Silent</span><span class="match-vs">VS</span><span class="match-team">Phoenix Elite</span></div><div class="match-info-row"><span class="match-league">VALORANT · BO5</span><span class="match-action">Watch Now <i class="fas fa-arrow-right"></i></span></div></div>
+                <div class="match-card"><div class="match-card-header"><span class="match-date-badge">May 2, 7:00 PM</span></div><div class="match-title">CS2 Regional Finals</div><div class="match-teams"><span class="match-team">Team Silent</span><span class="match-vs">VS</span><span class="match-team">Dragon Esports</span></div><div class="match-info-row"><span class="match-league">CS2 · BO3</span><span class="match-action">Details <i class="fas fa-arrow-right"></i></span></div></div>
+                <div class="match-card"><div class="match-card-header"><span class="match-date-badge">May 5, 6:00 PM</span></div><div class="match-title">PUBG Mobile Invitational</div><div class="match-teams"><span class="match-team">Team Silent</span><span class="match-vs">VS</span><span class="match-team">Thunder Squad</span></div><div class="match-info-row"><span class="match-league">PUBGM · 5 Matches</span><span class="match-action">Preview <i class="fas fa-arrow-right"></i></span></div></div>
+            </div>
+        </div>
+
+        <!-- SPONSORS -->
+        <div class="sponsors-section" data-aos="fade-up"><div class="section-header"><h2>Our Sponsors</h2></div><div class="sponsors-grid">
+            <div class="sponsor-card"><i class="fas fa-headset"></i><h4>ALIENWARE</h4><span class="sponsor-tier tier-premium">Premium</span></div>
+            <div class="sponsor-card"><i class="fas fa-microchip"></i><h4>INTEL</h4><span class="sponsor-tier tier-premium">Premium</span></div>
+            <div class="sponsor-card"><i class="fas fa-tint"></i><h4>RED BULL</h4><span class="sponsor-tier tier-gold">Gold</span></div>
+            <div class="sponsor-card"><i class="fas fa-keyboard"></i><h4>RAZER</h4><span class="sponsor-tier tier-gold">Gold</span></div>
+            <div class="sponsor-card"><i class="fas fa-mouse"></i><h4>LOGITECH</h4><span class="sponsor-tier tier-gold">Gold</span></div>
+            <div class="sponsor-card"><i class="fas fa-tv"></i><h4>TWITCH</h4><span class="sponsor-tier tier-partner">Partner</span></div>
+            <div class="sponsor-card"><i class="fas fa-chart-bar"></i><h4>NVIDIA</h4><span class="sponsor-tier tier-partner">Partner</span></div>
+            <div class="sponsor-card"><i class="fas fa-headphones"></i><h4>HYPERX</h4><span class="sponsor-tier tier-partner">Partner</span></div>
+        </div></div>
+    </main>
+</div>
+
+<!-- ==================== PAGE 2: ALL TEAMS (OUR ROSTER) ==================== -->
+<div id="allTeamsSection" class="page-section">
+    <main>
+        <div class="container"><button class="back-home-btn" id="backHomeBtn">← Back to Home</button><div class="teams-hero"><h1>Our Roster</h1></div></div>
+        <div class="teams-grid-page" id="teamsGridPage"></div>
+    </main>
+</div>
+
+<!-- ==================== PAGE 3: TEAM DETAIL ==================== -->
+<div id="teamDetailSection" class="page-section">
+    <div class="back-navigation"><button class="back-btn" id="backToTeamsBtn"><i class="fas fa-arrow-left"></i> Back to All Teams</button></div>
+    <div class="cover-photo" id="teamCoverPhoto"></div>
+    <div class="tab-nav"><button class="tab-btn active rosterTab">Roster</button><button class="tab-btn staffTab">Staff</button></div>
+    <div id="roster" class="tab-content active"><div class="slider-section"><button class="member-slider-btn prev"><i class="fas fa-chevron-left"></i></button><button class="member-slider-btn next"><i class="fas fa-chevron-right"></i></button><div class="slider-wrapper"><div class="slider-track" id="rosterTrack"></div></div><div class="slider-dots" id="rosterDots"></div></div></div>
+    <div id="staff" class="tab-content"><div class="slider-section"><button class="member-slider-btn prev"><i class="fas fa-chevron-left"></i></button><button class="member-slider-btn next"><i class="fas fa-chevron-right"></i></button><div class="slider-wrapper"><div class="slider-track" id="staffTrack"></div></div><div class="slider-dots" id="staffDots"></div></div></div>
+</div>
+
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-logo">
+            <img class="footer-logo-img" src="https://raw.githubusercontent.com/teamsilentesports/.gg/main/20260430_225451.png" alt="Team Silent Logo">
+            <h2>TEAM SILENT</h2>
+        </div>
+        <p class="footer-description">A world renowned professional gaming organization established in 2024.</p>
+        <div class="footer-links"><a href="#">Teams</a><a href="#">Organization</a><a href="#">Schedule</a><a href="#">Store</a></div>
+        <div class="footer-bottom"><span>© 2024 – 2026 Team Silent</span><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+</footer>
+<div class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></div>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 800, once: true });
+
+    // ==================== Game Logo URLs ====================
+    const gameLogos = {
+        valorant: 'https://raw.githubusercontent.com/teamsilentesports/.gg/main/20260430_190829.jpg',
+        freefire: 'https://raw.githubusercontent.com/teamsilentesports/.gg/main/20260430_181741.jpg',
+        pubgm: 'https://raw.githubusercontent.com/teamsilentesports/.gg/main/20260430_181658.jpg',
+        cod: 'https://placehold.co/600x400/006400/FFFFFF?text=CALL+OF+DUTY',
+        cs2: 'https://raw.githubusercontent.com/teamsilentesports/.gg/main/20260430_182019.jpg',
+        mlbb: 'https://raw.githubusercontent.com/teamsilentesports/.gg/main/20260430_182254.jpg',
+        efootball: 'https://raw.githubusercontent.com/teamsilentesports/.gg/main/20260430_181829.jpg',
+        dota2: 'https://raw.githubusercontent.com/teamsilentesports/.gg/main/20260430_182105.jpg'
+    };
+
+    // ==================== 4 HOME TEAM CARDS (Full Background Cover) ====================
+    const homeTeamsData = [
+        { id: 'valorant', name: 'Valorant', desc: 'VCT Contenders', bg: gameLogos.valorant },
+        { id: 'freefire', name: 'Free Fire', desc: 'Battle In Style', bg: gameLogos.freefire },
+        { id: 'cs2', name: 'CS2', desc: 'Precision Elite', bg: gameLogos.cs2 },
+        { id: 'cod', name: 'Call of Duty', desc: 'The Ultimate Battle', bg: gameLogos.cod }
+    ];
+    const teamStaticGrid = document.getElementById('teamStaticGrid');
+    function buildHomeTeamCards() {
+        teamStaticGrid.innerHTML = '';
+        homeTeamsData.forEach(team => {
+            const card = document.createElement('div'); 
+            card.className = 'team-static-card';
+            card.style.backgroundImage = `url('${team.bg}')`;
+            card.style.backgroundSize = 'cover';
+            card.style.backgroundPosition = 'center';
+            card.style.backgroundRepeat = 'no-repeat';
+            card.innerHTML = `
+                <div class="team-card-overlay">
+                    <h3>${team.name}</h3>
+                    <p>${team.desc}</p>
+                </div>`;
+            card.addEventListener('click', () => navigateToTeamDetail(team.id));
+            teamStaticGrid.appendChild(card);
+        });
+    }
+    buildHomeTeamCards();
+
+    // ==================== ALL ROSTER CARDS ====================
+    const allRosterData = [
+        { id: 'valorant', name: 'Valorant', desc: 'Turn the Tide', logo: gameLogos.valorant, hoverBg: gameLogos.valorant },
+        { id: 'freefire', name: 'Free Fire', desc: 'Battle In Style', logo: gameLogos.freefire, hoverBg: gameLogos.freefire },
+        { id: 'pubgm', name: 'PUBG Mobile', desc: 'Chicken Dinner', logo: gameLogos.pubgm, hoverBg: gameLogos.pubgm },
+        { id: 'cod', name: 'Call of Duty', desc: 'The Ultimate Battle', logo: gameLogos.cod, hoverBg: gameLogos.cod },
+        { id: 'cs2', name: 'Counter-Strike 2', desc: 'Aiming for the stars', logo: gameLogos.cs2, hoverBg: gameLogos.cs2 },
+        { id: 'mlbb', name: 'MLBB', desc: 'Mobile Legends', logo: gameLogos.mlbb, hoverBg: gameLogos.mlbb },
+        { id: 'efootball', name: 'eFootball', desc: 'The Beautiful Game', logo: gameLogos.efootball, hoverBg: gameLogos.efootball },
+        { id: 'dota2', name: 'Dota 2', desc: 'International Champions', logo: gameLogos.dota2, hoverBg: gameLogos.dota2 }
+    ];
+    const teamsGridPage = document.getElementById('teamsGridPage');
+    function buildRosterCards() {
+        if (!teamsGridPage) return;
+        teamsGridPage.innerHTML = '';
+        allRosterData.forEach(team => {
+            const card = document.createElement('div'); card.className = 'game-card';
+            card.innerHTML = `
+                <div class="game-card-bg" style="background-image:url('${team.hoverBg}')"></div>
+                <div class="game-card-content">
+                    <img class="game-logo-img" src="${team.logo}" alt="${team.name} Logo">
+                    <div class="game-card-icon"><h3>${team.name}</h3></div>
+                </div>`;
+            card.addEventListener('click', () => navigateToTeamDetail(team.id));
+            teamsGridPage.appendChild(card);
+        });
+    }
+    buildRosterCards();
+
+    // ==================== MENU ====================
+    let isMenuOpen = false;
+    const menuIcon = document.getElementById('menuIcon'), mainDropdown = document.getElementById('mainDropdown'), menuOverlay = document.getElementById('menuOverlay');
+    function toggleMenu() { isMenuOpen = !isMenuOpen; if (isMenuOpen) { mainDropdown.classList.add('show'); menuOverlay.classList.add('show'); menuIcon.classList.add('active'); } else closeMenu(); }
+    function closeMenu() { isMenuOpen = false; mainDropdown.classList.remove('show'); menuOverlay.classList.remove('show'); menuIcon.classList.remove('active'); document.querySelectorAll('.submenu').forEach(s => s.classList.remove('open')); }
+    menuIcon.addEventListener('click', e => { e.stopPropagation(); toggleMenu(); });
+    menuOverlay.addEventListener('click', closeMenu);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && isMenuOpen) closeMenu(); });
+
+    document.querySelectorAll('.main-menu-item').forEach(item => {
+        item.addEventListener('click', function(e) { e.stopPropagation(); const sub = this.nextElementSibling, action = this.getAttribute('data-action'); if (sub && sub.classList.contains('submenu')) sub.classList.toggle('open'); else if (action) { closeMenu(); setTimeout(() => handleAction(action), 300); } });
+    });
+    document.querySelectorAll('.submenu-item').forEach(item => { item.addEventListener('click', function(e) { e.stopPropagation(); const action = this.getAttribute('data-action'); closeMenu(); setTimeout(() => handleAction(action), 300); }); });
+    function handleAction(a) { const teams = ['valorant','freefire','pubgm','cod','cs2','mlbb','efootball','dota2']; if (teams.includes(a)) navigateToTeamDetail(a); else if (a === 'allteams') showAllTeamsPage(); else alert(a + ' page coming soon'); }
+
+    document.getElementById('homeLogo').addEventListener('click', () => { closeMenu(); showHomepage(); });
+    function showHomepage() { document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active-section')); document.getElementById('homepageSection').classList.add('active-section'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    function showAllTeamsPage() { document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active-section')); document.getElementById('allTeamsSection').classList.add('active-section'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+    document.getElementById('viewAllTeamsBtn').addEventListener('click', showAllTeamsPage);
+    document.getElementById('backHomeBtn').addEventListener('click', showHomepage);
+    document.getElementById('backToTeamsBtn').addEventListener('click', showAllTeamsPage);
+
+    // ==================== Team Detail Data ====================
+    const teamsData = {
+        valorant:{coverImage:gameLogos.valorant, roster:[{name:'Jett_Main',username:'@JettMain_TS',role:'Duelist',bio:'Aerial ace.',icon:'fa-wind'},{name:'Sage_Healer',username:'@SageHealer',role:'Sentinel',bio:'Team healer.',icon:'fa-heart'},{name:'Sova_Recon',username:'@SovaRecon_TS',role:'Initiator',bio:'Recon specialist.',icon:'fa-eye'}], staff:[{name:'Coach Valor',username:'@CoachValor',role:'Head Coach',bio:'FPS expert.',icon:'fa-bullseye'}]},
+        freefire:{coverImage:gameLogos.freefire, roster:[{name:'FireStar',username:'@FireStar_TS',role:'Rusher',bio:'Aggressive playmaker.',icon:'fa-fire'},{name:'BermudaKing',username:'@BermudaKing',role:'Support',bio:'Map control master.',icon:'fa-map'}], staff:[{name:'Coach Blaze',username:'@CoachBlaze',role:'Head Coach',bio:'Battle Royale expert.',icon:'fa-user-tie'}]},
+        pubgm:{coverImage:gameLogos.pubgm, roster:[{name:'ChickenLord',username:'@ChickenLord_TS',role:'IGL',bio:'Winner winner!',icon:'fa-drumstick-bite'},{name:'SniperKing',username:'@SniperKing',role:'Sniper',bio:'Long range specialist.',icon:'fa-crosshairs'}], staff:[{name:'Coach Erangel',username:'@CoachErangel',role:'Head Coach',bio:'Tactical genius.',icon:'fa-user-tie'}]},
+        cod:{coverImage:gameLogos.cod, roster:[{name:'WarzoneKing',username:'@WarzoneKing_TS',role:'Slayer',bio:'Kill machine.',icon:'fa-gun'},{name:'SniperElite',username:'@SniperElite',role:'Sniper',bio:'Longshot master.',icon:'fa-crosshairs'}], staff:[{name:'Coach Price',username:'@CoachPrice',role:'Head Coach',bio:'COD legend.',icon:'fa-user-tie'}]},
+        cs2:{coverImage:gameLogos.cs2, roster:[{name:'AWP_Killer',username:'@AWPKiller_TS',role:'AWPer',bio:'Deadly sniper.',icon:'fa-crosshairs'},{name:'RushMaster',username:'@RushMaster_Silent',role:'Entry',bio:'First in.',icon:'fa-bolt'}], staff:[{name:'Coach Steel',username:'@CoachSteel',role:'Head Coach',bio:'Former pro.',icon:'fa-user-tie'}]},
+        mlbb:{coverImage:gameLogos.mlbb, roster:[{name:'JungleKing',username:'@JungleKing_TS',role:'Jungler',bio:'Map domination.',icon:'fa-tree'},{name:'GoldLanePro',username:'@GoldLanePro',role:'Gold Laner',bio:'Consistent carry.',icon:'fa-crown'}], staff:[{name:'Coach LandOfDawn',username:'@CoachLOD',role:'Head Coach',bio:'MLBB expert.',icon:'fa-user-tie'}]},
+        efootball:{coverImage:gameLogos.efootball, roster:[{name:'GoalMachine',username:'@GoalMachine_TS',role:'Striker',bio:'Goal scoring machine.',icon:'fa-futbol'},{name:'DefenseWall',username:'@DefenseWall',role:'Defender',bio:'Unbreakable defense.',icon:'fa-shield'}], staff:[{name:'Coach Pitch',username:'@CoachPitch',role:'Head Coach',bio:'Football strategist.',icon:'fa-user-tie'}]},
+        dota2:{coverImage:gameLogos.dota2, roster:[{name:'MidKing',username:'@MidKing_Silent',role:'Mid',bio:'Dominates mid.',icon:'fa-crown'},{name:'CarryGod',username:'@CarryGod_TS',role:'Carry',bio:'Late-game monster.',icon:'fa-sword'}], staff:[{name:'Coach Puppey',username:'@CoachPuppey',role:'Head Coach',bio:'TI winner.',icon:'fa-trophy'}]}
+    };
+
+    function navigateToTeamDetail(tid) {
+        const d = teamsData[tid];
+        if(!d) return;
+        document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active-section'));
+        document.getElementById('teamDetailSection').classList.add('active-section');
+        document.getElementById('teamCoverPhoto').style.backgroundImage = `url('${d.coverImage}')`;
+        document.querySelector('.rosterTab').classList.add('active'); document.querySelector('.staffTab').classList.remove('active');
+        document.getElementById('roster').classList.add('active'); document.getElementById('staff').classList.remove('active');
+        buildCards('rosterTrack', d.roster); buildCards('staffTrack', d.staff);
+        currentSlide = 0; reinitSlider(); window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function buildCards(tid, members) { const track = document.getElementById(tid); track.innerHTML = ''; members.forEach(m => { const c = document.createElement('div'); c.className = 'member-card'; c.innerHTML = `<div class="member-image"><i class="fas ${m.icon}"></i><span class="member-role-badge">${m.role}</span></div><div class="member-info"><h3>${m.name}</h3><p style="color:#FFB347;font-size:0.8rem">${m.username}</p><p style="color:#8AA9D6;font-size:0.75rem">${m.bio}</p></div>`; track.appendChild(c); }); }
+
+    document.querySelector('.rosterTab').addEventListener('click', function() { this.classList.add('active'); document.querySelector('.staffTab').classList.remove('active'); document.getElementById('roster').classList.add('active'); document.getElementById('staff').classList.remove('active'); currentSlide = 0; reinitSlider(); });
+    document.querySelector('.staffTab').addEventListener('click', function() { this.classList.add('active'); document.querySelector('.rosterTab').classList.remove('active'); document.getElementById('staff').classList.add('active'); document.getElementById('roster').classList.remove('active'); currentSlide = 0; reinitSlider(); });
+
+    let currentSlide = 0;
+    function mspv() { if (window.innerWidth <= 768) return 1; if (window.innerWidth <= 1024) return 2; return 3; }
+    function goToSlide(index, tid) { const track = document.getElementById(tid), cards = track.querySelectorAll('.member-card'); if (!cards.length) return; const v = mspv(), w = cards[0].offsetWidth + 20; currentSlide = Math.max(0, Math.min(index, cards.length - v)); track.style.transform = `translateX(-${currentSlide * w}px)`; const sec = track.closest('.slider-section'); sec.querySelector('.prev').disabled = currentSlide === 0; sec.querySelector('.next').disabled = currentSlide >= cards.length - v; const did = tid === 'rosterTrack' ? 'rosterDots' : 'staffDots', dots = document.getElementById(did); dots.innerHTML = ''; for (let i = 0; i < Math.max(1, cards.length - v + 1); i++) { const dot = document.createElement('div'); dot.className = 'slider-dot' + (i === currentSlide ? ' active' : ''); dot.addEventListener('click', () => goToSlide(i, tid)); dots.appendChild(dot); } }
+    document.querySelectorAll('.member-slider-btn').forEach(btn => { btn.addEventListener('click', function() { const dir = this.classList.contains('prev') ? 'prev' : 'next'; const at = document.querySelector('.tab-content.active'), tid = at.id === 'roster' ? 'rosterTrack' : 'staffTrack', track = document.getElementById(tid), cards = track.querySelectorAll('.member-card'); if (!cards.length) return; currentSlide = dir === 'next' ? Math.min(currentSlide + 1, cards.length - mspv()) : Math.max(currentSlide - 1, 0); goToSlide(currentSlide, tid); }); });
+    function reinitSlider() { const at = document.querySelector('.tab-content.active'), tid = at.id === 'roster' ? 'rosterTrack' : 'staffTrack', track = document.getElementById(tid); if (!track.querySelectorAll('.member-card').length) return; currentSlide = 0; track.style.transform = 'translateX(0)'; goToSlide(0, tid); }
+    window.addEventListener('resize', reinitSlider);
+
+    window.addEventListener('scroll', () => { document.getElementById('backToTop').classList.toggle('show', window.scrollY > 300); });
+    document.getElementById('backToTop').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+</script>
+</body>
+</html>
